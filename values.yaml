@@ -24,7 +24,7 @@ fullnameOverride: "ckan"
 pvc:
   enabled: true
   size: "1Gi"
-  storageClassName: ""
+  storageClassName: "gp2"
   accessmode: "ReadWriteOnce"
 
 # DBDeploymentName -- Variable for name override for postgres deployment
@@ -322,7 +322,7 @@ solr:
   global:
     imageRegistry: ""
     imagePullSecrets: []
-    storageClass: ""
+    storageClass: "gp2"
   auth:
   # solr.auth.enabled -- Enable or disable auth (if auth is disabled solr-init cant upload the configset/schema.xml for ckan)
     enabled: true
@@ -373,9 +373,16 @@ solr:
 postgresql:
   # postgresql.enabled -- Flag to control whether to deploy PostgreSQL
   enabled: true
-  persistence:
-    # postgresql.persistence.size -- Size of the PostgreSQL pvc
-    size: 1Gi
+  # persistence:
+  #   # postgresql.persistence.size -- Size of the PostgreSQL pvc
+  #   size: 1Gi
+  #   # postgresql.persistence.storageClass -- Storage class for the PostgreSQL pvc
+  #   storageClass: "gp2"
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: gp2
   # postgresql.fullnameOverride -- Name override for the PostgreSQL deployment
   fullnameOverride: *DBDeploymentName
   # @param postgresql.auth.postgresPassword Password for the "postgres" admin user (overrides `auth.postgresPassword`)
