@@ -1,7 +1,7 @@
 # makefile for managing ckan deployment on k8s using helm
 
 # variables
-kube-context := arn:aws:eks:us-west-2:515966508187:cluster/scidx # k8s cluster context
+kube-context := microk8s-202 # k8s cluster context
 helm-release := ckan # Name of the helm release
 ns := ckan
 folder := . # Path to the helm chart dir
@@ -18,6 +18,7 @@ update:
 deploy:
 	helm upgrade --cleanup-on-fail \
 		--install $(helm-release) $(folder) \
+		--kube-context $(kube-context) \
 		--namespace $(ns) \
 		--create-namespace
 
