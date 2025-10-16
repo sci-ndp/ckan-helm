@@ -62,8 +62,7 @@ For convenience, the upstream "Chart Requirements" overview is reproduced below;
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | postgresql | 14.0.1 |
-| https://charts.bitnami.com/bitnami | redis | 18.12.1 |
-| https://charts.helm.sh/incubator | solr | 8.7.1 |
-| https://keitaro-charts.storage.googleapis.com | datapusher | 1.0.0 |
+| https://charts.bitnami.com/bitnami | postgresql | 16.7.27 |
+| https://charts.bitnami.com/bitnami | redis | 23.0.2 |
+| https://charts.bitnami.com/bitnami | solr | 9.6.10 |
 
