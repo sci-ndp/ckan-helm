@@ -1,7 +1,7 @@
 # makefile for managing ckan deployment on k8s using helm
 
 # variables
-kube-context := microk8s-202 # k8s cluster context
+kube-context := microk8s # k8s cluster context
 helm-release := ckan # Name of the helm release
 ns := ckan
 folder := . # Path to the helm chart dir
@@ -17,6 +17,7 @@ update:
 # deploy the helm chart
 deploy:
 	helm upgrade --cleanup-on-fail \
+		--set global.security.allowInsecureImages=true \
 		--install $(helm-release) $(folder) \
 		--kube-context $(kube-context) \
 		--namespace $(ns) \

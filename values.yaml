@@ -78,7 +78,7 @@ ckan:
   # ckan.sysadminEmail -- CKAN system admin email
   sysadminEmail: "admin@domain.com"
   # ckan.siteTitle -- Site title for the instance
-  siteTitle: "Site Title here"
+  siteTitle: "NDP Endpoint CKAN Dev"
   # ckan.siteId -- Site id
   siteId: "site-id-here"
   # ckan.siteUrl -- Url for the CKAN instance
@@ -155,7 +155,9 @@ ckan:
   #     value: "bar"
   #
 
-  extraEnv: []
+  extraEnv:
+    - name: CKAN__ROOT_PATH
+      value: /ckan
 
   readiness:
     # ckan.readiness.initialDelaySeconds -- Inital delay seconds for the readiness probe
@@ -237,7 +239,7 @@ securityContext: {}
 service:
   # service.type -- Type of the service created for the CKAN pod
   type: ClusterIP
-  port: 80
+  port: 81
   targetPort: 5000
 
 ingress:
@@ -326,6 +328,7 @@ solr:
     imageRegistry: ""
     imagePullSecrets: []
     storageClass: ""
+    # storageClass: "microk8s-hostpath"
   auth:
   # solr.auth.enabled -- Enable or disable auth (if auth is disabled solr-init cant upload the configset/schema.xml for ckan)
     enabled: true
