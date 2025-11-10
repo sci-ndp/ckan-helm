@@ -71,10 +71,12 @@ ckan:
   # ckan.sysadminName -- CKAN system admin username
   sysadminName: "ckan_admin"
   # ckan.sysadminPassword -- CKAN system admin password
-  sysadminPassword: "PasswordHere"
+  # sysadminPassword: "PasswordHere"
+  sysadminPassword: "yutianqin"
   # ckan.sysadminApiToken -- CKAN system admin API token
   # Needs to be generated via the CKAN UI and replaced after initial deployment
-  sysadminApiToken: "replace_this_with_generated_api_token_for_sysadmin"
+  # sysadminApiToken: "replace_this_with_generated_api_token_for_sysadmin"
+  sysadminApiToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJvNjFyMGlyeXBwd2hKR3dIeWFfU2VjOVhwZXcxZExxOW1qajVBRnFJcjlJIiwiaWF0IjoxNzYyODEyNTE2fQ.v_oQ62gWqkWeg6kpCkhrXdpO7JwrjszDgKDybNP1lug"
   # ckan.sysadminEmail -- CKAN system admin email
   sysadminEmail: "admin@domain.com"
   # ckan.siteTitle -- Site title for the instance
@@ -158,6 +160,8 @@ ckan:
   extraEnv:
     - name: CKAN__ROOT_PATH
       value: /ckan
+    - name: CKAN___FANSTATIC__SCRIPT_NAME
+      value: /ckan
 
   readiness:
     # ckan.readiness.initialDelaySeconds -- Inital delay seconds for the readiness probe
@@ -239,8 +243,7 @@ securityContext: {}
 service:
   # service.type -- Type of the service created for the CKAN pod
   type: ClusterIP
-  port: 81
-  targetPort: 5000
+  port: 80
 
 ingress:
   enabled: true
