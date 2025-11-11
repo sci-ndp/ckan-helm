@@ -76,7 +76,7 @@ ckan:
   # ckan.sysadminApiToken -- CKAN system admin API token
   # Needs to be generated via the CKAN UI and replaced after initial deployment
   # sysadminApiToken: "replace_this_with_generated_api_token_for_sysadmin"
-  sysadminApiToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJvNjFyMGlyeXBwd2hKR3dIeWFfU2VjOVhwZXcxZExxOW1qajVBRnFJcjlJIiwiaWF0IjoxNzYyODEyNTE2fQ.v_oQ62gWqkWeg6kpCkhrXdpO7JwrjszDgKDybNP1lug"
+  sysadminApiToken: "password_placeholder"
   # ckan.sysadminEmail -- CKAN system admin email
   sysadminEmail: "admin@domain.com"
   # ckan.siteTitle -- Site title for the instance
