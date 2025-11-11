@@ -32,7 +32,7 @@ The Makefile exposes these variables (with defaults shown):
 |----------------|-----------------|--------------------------------------|
 | `helm-release` | `ckan`          | Name of the Helm release             |
 | `ns`           | `ckan`          | Kubernetes namespace for the chart   |
-| `kube-context` | `microk8s-202`  | `kubectl` context used by Helm       |
+| `kube-context` | `microk8s`  | `kubectl` context used by Helm       |
 | `folder`       | `.`             | Chart directory passed to Helm       |
 
 Because they are standard make variables, supply overrides on the command line (`make deploy ns=ckan-dev`). Edit the `Makefile` if you need to add flags such as `--values additional.yaml` or `--set` expressions.
