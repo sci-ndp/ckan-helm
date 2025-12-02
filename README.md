@@ -4,49 +4,59 @@ CKAN Helm (SciDx fork)
 This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/keitaroinc/ckan-helm) and adds a `Makefile` so SciDx teams can deploy a complete CKAN stack with consistent defaults. The chart bundles CKAN plus optional dependencies (PostgreSQL, SOLR, Redis, Datapusher) and can be tailored through `values.yaml` or custom overrides.
 
 ## Prerequisites
-- A reachable Kubernetes cluster and a configured `kubectl` context (defaults to `microk8s-202` in the Makefile)
+- A reachable Kubernetes cluster and a configured `kubectl` context (the Makefile falls back to your current context)
 - [Helm 3](https://helm.sh/docs/intro/install/) and `make` installed locally
 - Permission to create namespaces, deployments, and persistent volumes in the target cluster
 
-## Quick Start (Makefile workflow)
-1. `make update` – pull the chart's dependency subcharts into `charts/`
-2. Adjust `values.yaml` or prepare your own override file as needed
-3. `make deploy` – run `helm upgrade --install` for release `ckan` in namespace `ckan`
-4. `make status` – inspect the release once pods are running
-5. `make uninstall` – remove the release when you are finished (PVCs may need manual cleanup)
+## Installation
+1. Copy defaults once so every target reuses them:
+   ```bash
+   cp config.example.mk config.mk
+   ```
 
-All targets are idempotent; repeat `make deploy` after editing configuration to roll out changes.
+   >`KUBE_CONTEXT` defaults to your current kubectl context (or `microk8s` if none); override in `config.mk` as needed.
 
-## Make targets and knobs
-- `make update` keeps dependency charts in sync with the versions pinned in `Chart.lock`.
-- `make deploy` installs or upgrades the release. Override defaults by passing variables, for example:
-  ```sh
-  make deploy helm-release=ckan-staging ns=data-platform kube-context=staging
-  ```
-- `make status` surfaces the Helm release status to help troubleshoot failed hooks or pending pods.
-- `make uninstall` removes the release from the target namespace. Delete PVCs manually if you want a clean slate: `kubectl delete pvc -n <ns> -l app=ckan`.
+    Key settings in `config.mk`, change as needed:
+    - `KUBE_CONTEXT`: kube context to target (overrides current-context).
+    - `NAMESPACE`: namespace for CKAN stack.
+    - `RELEASE_NAME`: Helm release name details for the CKAN stack.
 
-The Makefile exposes these variables (with defaults shown):
+2. Layer site-specific overrides on top of `values.yaml`:
+   ```bash
+   cp site-values.example.yaml site-values.yaml
+   ```
+   Edit `site-values.yaml` for your environment:
+   - `ckan.siteTitle`, `ckan.siteUrl`: public URL.
+   - `ckan.sysadminName`, `ckan.sysadminEmail`, `ckan.sysadminPassword`: Initial admin identity and password.
+   - `ingress.className`: IngressClass to use (e.g., `public`, `nginx`).
+   - `ingress.hosts[].host`: Hostname served by the ingress.
+   - `ingress.hosts[].paths[].path`: Keep `/ckan(/|$)(.*)` or another path that routes traffic to CKAN; required for a valid ingress rule, no need to change.
+   - `pvc.storageClassName`, `pvc.size`: Storage class and size for CKAN data PVC.
 
-| Variable       | Default         | Purpose                              |
-|----------------|-----------------|--------------------------------------|
-| `helm-release` | `ckan`          | Name of the Helm release             |
-| `ns`           | `ckan`          | Kubernetes namespace for the chart   |
-| `kube-context` | `microk8s`  | `kubectl` context used by Helm       |
-| `folder`       | `.`             | Chart directory passed to Helm       |
+3. Pull chart dependencies:
+    ```bash
+    make update
+    ```
 
-Because they are standard make variables, supply overrides on the command line (`make deploy ns=ckan-dev`). Edit the `Makefile` if you need to add flags such as `--values additional.yaml` or `--set` expressions.
+4. Deploy the CKAN stack:
+    ```bash
+    # Install/upgrade the CKAN stack in the target namespace
+    make deploy
+    ```
 
-## Customising the chart
-- **values.yaml** – edit this file to enable/disable bundled services or to inject CKAN configuration values.
-- **Separate overrides** – keep environment-specific files (e.g. `values.staging.yaml`) and either adjust the Makefile or call Helm directly via `helm upgrade --install ckan . -f values.staging.yaml`.
-- **Existing infrastructure** – set `postgresql.enabled`, `redis.enabled`, etc., to `false` when pointing CKAN to managed services instead of the bundled dependencies.
+## Accessing your CKAN
+`http://<ingress-host>/ckan`
 
-## Repository layout
-- `Chart.yaml`, `Chart.lock`, `charts/` – Helm metadata and vendored dependencies
-- `templates/`, `values.yaml` – core CKAN chart templates and defaults
-- `dependency-charts/`, `solr-init/` – helper charts and jobs used by the deployment
-- `Makefile` – opinionated entry points for SciDx deployment.
+## Sysadmin API token
+Generate a fresh API token for the sysadmin user from the CKAN UI, then update your overrides and secret so the deployment picks it up:
+1. In CKAN, sign in as the sysadmin and create a new API token.
+2. Update the CKAN API token:
+   ```bash
+   kubectl -n <namespace> create secret generic ckansysadminapitoken \
+     --from-literal=sysadminApiToken=<generated_api_token> \
+     --dry-run=client -o yaml | kubectl apply -f -
+   ```
+   Replace `<namespace>` with your target namespace, and `<generated_api_token>` with the new token from step 1.
 
 ## Troubleshooting
 - If `make deploy` fails, re-run `make status` and inspect failed hooks or pods, then review pod logs via `kubectl logs`.
@@ -65,4 +75,3 @@ For convenience, the upstream "Chart Requirements" overview is reproduced below;
 | https://charts.bitnami.com/bitnami | postgresql | 16.7.27 |
 | https://charts.bitnami.com/bitnami | redis | 23.0.2 |
 | https://charts.bitnami.com/bitnami | solr | 9.6.10 |
-

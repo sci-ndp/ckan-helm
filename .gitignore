@@ -1,1 +1,3 @@
 charts/*
+config.mk
+site-values.yaml

@@ -71,20 +71,18 @@ ckan:
   # ckan.sysadminName -- CKAN system admin username
   sysadminName: "ckan_admin"
   # ckan.sysadminPassword -- CKAN system admin password
-  # sysadminPassword: "PasswordHere"
-  sysadminPassword: "yutianqin"
+  sysadminPassword: "PasswordHere"
   # ckan.sysadminApiToken -- CKAN system admin API token
   # Needs to be generated via the CKAN UI and replaced after initial deployment
   sysadminApiToken: "replace_this_with_generated_api_token_for_sysadmin"
   # ckan.sysadminEmail -- CKAN system admin email
   sysadminEmail: "admin@domain.com"
   # ckan.siteTitle -- Site title for the instance
-  siteTitle: "NDP Endpoint CKAN Dev"
+  siteTitle: "NDP Endpoint CKAN"
   # ckan.siteId -- Site id
   siteId: "site-id-here"
   # ckan.siteUrl -- Url for the CKAN instance
-  # siteUrl: "http://localhost:5000"
-  siteUrl: "https://ndp-dev-202.chpc.utah.edu"
+  siteUrl: "http://localhost:5000"
   # ckan.ckanPlugins -- List of plugins to be used by the instance
   ckanPlugins: "envvars activity image_view text_view datatables_view datastore xloader"
   # ckan.storagePath -- Storage path to be used by the instance
@@ -252,7 +250,7 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
   className: "public"
   hosts:
-    - host: ndp-dev-202.chpc.utah.edu
+    - host: ckan.example.com
       paths:
         - path: /ckan(/|$)(.*)
           pathType: ImplementationSpecific

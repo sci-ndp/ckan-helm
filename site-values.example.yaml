@@ -1,0 +1,21 @@
+# Copy this file to site-values.yaml and adjust for your environment.
+# Only include the keys you need. Helm layers this file on top of values.yaml.
+
+ckan:
+  siteTitle: "CKAN"
+  siteUrl: "https://ckan.example.com"
+  sysadminEmail: "admin@example.com"
+  sysadminName: "ckan_admin"
+  sysadminPassword: "replace-me"
+
+ingress:
+  className: replace-me
+  hosts:
+    - host: ckan.example.com
+      paths:
+        - path: /ckan(/|$)(.*)
+          pathType: ImplementationSpecific
+
+pvc:
+  storageClassName: gp3
+  size: 20Gi
