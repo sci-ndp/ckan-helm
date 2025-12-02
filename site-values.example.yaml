@@ -3,7 +3,7 @@
 
 ckan:
   siteTitle: "CKAN"
-  siteUrl: "https://ckan.example.com"
+  siteUrl: "https://<your-host.example.com>"
   sysadminEmail: "admin@example.com"
   sysadminName: "ckan_admin"
   sysadminPassword: "replace-me"
@@ -11,11 +11,11 @@ ckan:
 ingress:
   className: replace-me
   hosts:
-    - host: ckan.example.com
+    - host: <your-host.example.com>
       paths:
         - path: /ckan(/|$)(.*)
           pathType: ImplementationSpecific
 
 pvc:
-  storageClassName: gp3
-  size: 20Gi
+  storageClassName: replace-me
+  size: 5Gi

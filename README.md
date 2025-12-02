@@ -1,15 +1,15 @@
 CKAN Helm (SciDx fork)
 ====================
 
-This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/keitaroinc/ckan-helm) and adds a `Makefile` so SciDx teams can deploy a complete CKAN stack with consistent defaults. The chart bundles CKAN plus optional dependencies (PostgreSQL, SOLR, Redis, Datapusher) and can be tailored through `values.yaml` or custom overrides.
+This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/keitaroinc/ckan-helm) and adds a `Makefile` so SciDx teams can deploy a complete CKAN stack with consistent defaults. The chart bundles CKAN plus optional dependencies (PostgreSQL, SOLR, Redis, Datapusher) and can be tailored through custom overrides(`site-values.yaml`) or optionally `values.yaml` if needed.
 
 ## Prerequisites
 - A reachable Kubernetes cluster and a configured `kubectl` context (the Makefile falls back to your current context)
 - [Helm 3](https://helm.sh/docs/intro/install/) and `make` installed locally
 - Permission to create namespaces, deployments, and persistent volumes in the target cluster
 
-## Installation
-1. Copy defaults once so every target reuses them:
+## **Installation**
+1. #### **Copy default make config**, all make targets share the same settings:
    ```bash
    cp config.example.mk config.mk
    ```
@@ -21,7 +21,7 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
     - `NAMESPACE`: namespace for CKAN stack.
     - `RELEASE_NAME`: Helm release name details for the CKAN stack.
 
-2. Layer site-specific overrides on top of `values.yaml`:
+2. #### **Centralize Site Overrides**
    ```bash
    cp site-values.example.yaml site-values.yaml
    ```
@@ -33,21 +33,20 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
    - `ingress.hosts[].paths[].path`: Keep `/ckan(/|$)(.*)` or another path that routes traffic to CKAN; required for a valid ingress rule, no need to change.
    - `pvc.storageClassName`, `pvc.size`: Storage class and size for CKAN data PVC.
 
-3. Pull chart dependencies:
+3. #### **Update Helm Chart Dependencies:** Fetch and update Helm chart dependencies listed in `Chart.yaml`
     ```bash
     make update
     ```
 
-4. Deploy the CKAN stack:
+5. #### **Deploy CKAN:** Install/upgrade CKAN in the target namespace using Helm
     ```bash
-    # Install/upgrade the CKAN stack in the target namespace
     make deploy
     ```
 
-## Accessing your CKAN
+## **Access** your CKAN
 `http://<ingress-host>/ckan`
 
-## Sysadmin API token
+## **Sysadmin API token**
 Generate a fresh API token for the sysadmin user from the CKAN UI, then update your overrides and secret so the deployment picks it up:
 1. In CKAN, sign in as the sysadmin and create a new API token.
 2. Update the CKAN API token:
