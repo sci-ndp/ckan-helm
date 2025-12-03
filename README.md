@@ -62,6 +62,9 @@ Generate a fresh API token for the sysadmin user from the CKAN UI, then update y
 - Namespace already exists errors usually mean a partial install; run `make uninstall` before retrying.
 - Persistent data lives in PVCs that Helm does not delete automatically. Clear them explicitly when resetting an environment.
 
+## Next Steps
+Go back to [**SciDx Kubernetes Document**](https://github.com/sci-ndp/scidx-k8s/blob/main/README.md#deploy-ckan) for more details about the overall Kubernetes setup for SciDx service.
+
 ## Upstream reference
 The upstream README contains extensive configuration tables and background information about each value exposed by the chart. Refer to:
 - [Upstream README](https://github.com/keitaroinc/ckan-helm#readme) for a complete list of tunables and dependency charts.
