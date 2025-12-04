@@ -25,13 +25,9 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
    ```bash
    cp site-values.example.yaml site-values.yaml
    ```
-   Edit `site-values.yaml` for your environment:
-   - `ckan.siteTitle`, `ckan.siteUrl`: public URL.
-   - `ckan.sysadminName`, `ckan.sysadminEmail`, `ckan.sysadminPassword`: Initial admin identity and password.
-   - `ingress.className`: IngressClass to use (e.g., `public`, `nginx`).
-   - `ingress.hosts[].host`: Hostname served by the ingress.
-   - `ingress.hosts[].paths[].path`: Keep `/ckan(/|$)(.*)` or another path that routes traffic to CKAN; required for a valid ingress rule, no need to change.
-   - `pvc.storageClassName`, `pvc.size`: Storage class and size for CKAN data PVC.
+   > Only keys present in `site-values.yaml` override the defaults in `values.yaml`, so feel free to delete anything you do not need. The Makefile automatically layers this file (when present) for every deploy action.
+   
+   For details and examples, see the "Custom Site Values" section below: [Custom Site Values](#custom-site-values)
 
 3. #### **Update Helm Chart Dependencies:** Fetch and update Helm chart dependencies listed in `Chart.yaml`
     ```bash
@@ -64,6 +60,40 @@ Generate a fresh API token for the sysadmin user from the CKAN UI, then update y
 
 ## Next Steps
 Go back to [**SciDx Kubernetes Document**](https://github.com/sci-ndp/scidx-k8s/blob/main/README.md#deploy-ckan) for more details about the overall Kubernetes setup for SciDx service.
+
+<br>
+
+## Custom Site Values
+Goal: fill in site-values.yaml
+
+Gather these first:
+   1. `DNS hostname` of your ingress controller users will hit (e.g., ndp-dev-202.chpc.utah.edu);
+   2. `Admin user email`;
+   3. `Storage class name` to use for PVCs; run `kubectl get storageclass` if unsure.
+   4. `Ingress class name` of your cluster ingress controller; run `kubectl get ingressclass` if unsure.
+
+Open site-values.yaml and replace every <...>; Example filled file below for reference:
+```yaml
+ckan:
+  siteTitle: "CKAN"
+  siteUrl: "https://ndp-dev-202.chpc.utah.edu"
+  sysadminEmail: "yutian.qin@utah.edu"
+  sysadminName: "ckan_admin"
+  sysadminPassword: "password123"  # cannot be only numeric
+
+ingress:
+  className: public # microk8s ingress class
+  hosts:
+    - host: ndp-dev-202.chpc.utah.edu
+      paths:
+        - path: /ckan(/|$)(.*)
+          pathType: ImplementationSpecific
+
+pvc:
+  storageClassName: "microk8s-hostpath" # microk8s storage class
+  size: "1Gi"
+```
+[Back to Installation](#centralize-site-overrides)
 
 ## Upstream reference
 The upstream README contains extensive configuration tables and background information about each value exposed by the chart. Refer to:
