@@ -23,6 +23,10 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
    ```bash
    cp site-values.example.yaml site-values.yaml
    ```
+   Then open ./ndp-hub/site-values.yaml and set values<br>
+   ```bash
+   vi ./ndp-hub/site-values.yaml
+   ```
    For details and examples, [click to see the `Custom Site Values` section below](#custom-site-values)
 
 3. #### **Update Helm Chart Dependencies:** Fetch and update Helm chart dependencies listed in `Chart.yaml`
