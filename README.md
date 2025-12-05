@@ -13,21 +13,17 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
    ```bash
    cp config.example.mk config.mk
    ```
-
-   >`KUBE_CONTEXT` defaults to your current kubectl context (or `microk8s` if none); override in `config.mk` as needed.
-
-    Key settings in `config.mk`, change as needed:
-    - `KUBE_CONTEXT`: kube context to target (overrides current-context).
-    - `NAMESPACE`: namespace for CKAN stack.
-    - `RELEASE_NAME`: Helm release name details for the CKAN stack.
+   Then open ./config.mk and set values
+   ```bash
+   vi config.mk
+   ```
+   [Optional: Click to see example `config.mk`](#configmk-settings)
 
 2. #### **Centralize Site Overrides**
    ```bash
    cp site-values.example.yaml site-values.yaml
    ```
-   > Only keys present in `site-values.yaml` override the defaults in `values.yaml`, so feel free to delete anything you do not need. The Makefile automatically layers this file (when present) for every deploy action.
-   
-   For details and examples, see the "Custom Site Values" section below: [Custom Site Values](#custom-site-values)
+   For details and examples, [click to see the `Custom Site Values` section below](#custom-site-values)
 
 3. #### **Update Helm Chart Dependencies:** Fetch and update Helm chart dependencies listed in `Chart.yaml`
     ```bash
@@ -47,11 +43,11 @@ Generate a fresh API token for the sysadmin user from the CKAN UI, then update y
 1. In CKAN, sign in as the sysadmin and create a new API token.
 2. Update the CKAN API token:
    ```bash
-   kubectl -n <namespace> create secret generic ckansysadminapitoken \
+   kubectl -n ckan create secret generic ckansysadminapitoken \
      --from-literal=sysadminApiToken=<generated_api_token> \
      --dry-run=client -o yaml | kubectl apply -f -
    ```
-   Replace `<namespace>` with your target namespace, and `<generated_api_token>` with the new token from step 1.
+   Replace ckan with your target namespace(default: **ckan**), and `<generated_api_token>` with the new token from step 1.
 
 ## Troubleshooting
 - If `make deploy` fails, re-run `make status` and inspect failed hooks or pods, then review pod logs via `kubectl logs`.
@@ -62,6 +58,21 @@ Generate a fresh API token for the sysadmin user from the CKAN UI, then update y
 Go back to [**SciDx Kubernetes Document**](https://github.com/sci-ndp/scidx-k8s/blob/main/README.md#deploy-ckan) for more details about the overall Kubernetes setup for SciDx service.
 
 <br>
+
+## config.mk Settings
+`KUBE_CONTEXT`: kubernetes cluster context (defaults to **kubectl config current-context** if leaves empty, or **"microk8s"** if none).
+
+`NAMESPACE`: namespace to deploy CKAN into (default: **ckan**).
+
+`RELEASE_NAME`: Helm release name for CKAN deployment (default: **ckan**).
+
+Example:
+```mk
+KUBE_CONTEXT = arn:aws:eks:us-west-2:xxxxxxxxxxxx:cluster/cluster-name
+HELM_RELEASE = ckan
+NAMESPACE = ckan
+```
+[Back to `Installation`](#copy-default-make-config-all-make-targets-share-the-same-settings)
 
 ## Custom Site Values
 Goal: fill in site-values.yaml
@@ -93,7 +104,7 @@ pvc:
   storageClassName: "microk8s-hostpath" # microk8s storage class
   size: "1Gi"
 ```
-[Back to Installation](#centralize-site-overrides)
+[Back to `Installation`](#centralize-site-overrides)
 
 ## Upstream reference
 The upstream README contains extensive configuration tables and background information about each value exposed by the chart. Refer to:
