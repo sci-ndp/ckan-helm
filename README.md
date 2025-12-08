@@ -91,22 +91,22 @@ Open site-values.yaml and replace every <...>; Example filled file below for ref
 ```yaml
 ckan:
   siteTitle: "CKAN"
-  siteUrl: "https://ndp-dev-202.chpc.utah.edu"
-  sysadminEmail: "yutian.qin@utah.edu"
-  sysadminName: "ckan_admin"
-  sysadminPassword: "password123"  # cannot be only numeric
+  siteUrl: "https://<ckan.example.com>" # REQUIRED: your DNS hostname
+  sysadminEmail: "<admin@example.com>"
+  sysadminName: "<ckan_admin>"
+  sysadminPassword: "<password123>" # cannot be only numeric
 
 ingress:
-  className: public # microk8s ingress class
+  className: <nginx>  # change if your ingress class is different
   hosts:
-    - host: ndp-dev-202.chpc.utah.edu
+    - host: <ckan.example.com> # REQUIRED: your DNS hostname
       paths:
         - path: /ckan(/|$)(.*)
           pathType: ImplementationSpecific
 
 pvc:
-  storageClassName: "microk8s-hostpath" # microk8s storage class
-  size: "1Gi"
+  storageClassName: "<storage-class>"  # change if your storage class is different
+  size: "1Gi" # adjust size as needed 
 ```
 [Back to `Installation`](#centralize-site-overrides)
 
