@@ -42,16 +42,34 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
 ## **Access** your CKAN
 `http://<ingress-host>/ckan`
 
+## **Enable NDP Endpoint dataset registry**
+
+To enable the NDP Endpoint dataset registry in your newly deployed CKAN, follow the steps in the Sysadmin API token section below to create a sysadmin API token.
+
 ## **Sysadmin API token**
 Generate a fresh API token for the sysadmin user from the CKAN UI, then update your overrides and secret so the deployment picks it up:
-1. In CKAN, sign in as the sysadmin and create a new API token.
-2. Update the CKAN API token:
+
+1. **Log in as the sysadmin**
+  - Visit `http://<ingress-host>/ckan/user/login`.
+  - Use the **`sysadminName`** and **`sysadminPassword`** you set in `site-values.yaml`.
+  ![CKAN Login Page](image/login.png)
+
+2. **Create the token in CKAN**
+  - Click your username (top right) → **API tokens**.
+  - Enter a name (e.g., "helm-deploy"), click **Create API Token**.
+  ![CKAN API Token 0](image/api-token-0.png)
+  - And copy the generated token
+  ![CKAN API Token 1](image/api-token-1.png)
+
+3. **Store the token in Kubernetes**
    ```bash
    kubectl -n ckan create secret generic ckansysadminapitoken \
      --from-literal=sysadminApiToken=<generated_api_token> \
      --dry-run=client -o yaml | kubectl apply -f -
    ```
-   Replace ckan with your target namespace(default: **ckan**), and `<generated_api_token>` with the new token from step 1.
+   Replace ckan with your target namespace (default: **ckan**), and `<generated_api_token>` with the token you copied in step 2.
+  
+    > Save this token. This token will be used by NDP Endpoint API deployment.
 
 ## Troubleshooting
 - If `make deploy` fails, re-run `make status` and inspect failed hooks or pods, then review pod logs via `kubectl logs`.

@@ -1,3 +1,4 @@
+.DS_Store
 charts/*
 config.mk
 site-values.yaml

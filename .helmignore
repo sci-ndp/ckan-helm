@@ -1,3 +1,9 @@
 .git
 .github
 gha-creds-*.json
+image/*
+# local clutter
+.DS_Store
+*.swp
+*.bak
+*.tmp
