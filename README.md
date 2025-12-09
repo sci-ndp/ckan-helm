@@ -25,7 +25,7 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
    ```
    Then open ./ndp-hub/site-values.yaml and set values<br>
    ```bash
-   vi ./ndp-hub/site-values.yaml
+   vi site-values.yaml
    ```
    For details and examples, [click to see the `Custom Site Values` section below](#custom-site-values)
 
@@ -69,7 +69,7 @@ Generate a fresh API token for the sysadmin user from the CKAN UI, then update y
    ```
    Replace ckan with your target namespace (default: **ckan**), and `<generated_api_token>` with the token you copied in step 2.
   
-    > Save this token. This token will be used by NDP Endpoint API deployment.
+4. **[!IMPORTANT] ⚠️ Save this token; it is required for the NDP Endpoint API deployment.**
 
 ## Troubleshooting
 - If `make deploy` fails, re-run `make status` and inspect failed hooks or pods, then review pod logs via `kubectl logs`.
