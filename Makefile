@@ -14,6 +14,7 @@ endif
 HELM_RELEASE ?= ckan
 NAMESPACE ?= ckan
 CHART_DIR ?= .
+KUBECTL ?= kubectl --context $(KUBE_CONTEXT) --namespace $(NAMESPACE)
 
 # Values layering
 VALUES_FILE ?= values.yaml
@@ -26,7 +27,7 @@ endif
 
 EXTRA_SET_ARGS := --set global.security.allowInsecureImages=true
 
-.PHONY: update deploy uninstall status
+.PHONY: update deploy uninstall status sysadmin-token
 
 # Update Helm chart dependencies by downloading them into the charts/ directory
 update:
@@ -56,3 +57,37 @@ status:
 	helm status $(HELM_RELEASE) \
 		--kube-context $(KUBE_CONTEXT) \
 		--namespace $(NAMESPACE)
+
+
+# CKAN CLI defaults for token generation
+CKAN_INI_PATH ?= /app/production.ini
+
+# Generate a sysadmin API token inside the CKAN pod and store it as a secret for downstream jobs
+sysadmin-token:
+	@echo "Generating CKAN sysadmin API token and applying it to namespace $(NAMESPACE)..."
+	@POD=$$($(KUBECTL) get pods \
+		-l "app.kubernetes.io/instance=ckan,app.kubernetes.io/name=ckan" \
+		-o jsonpath='{range .items[?(@.status.phase=="Running")]}{.metadata.name}{"\n"}{end}' | head -n 1); \
+	if [ -z "$$POD" ]; then \
+		echo "No running CKAN pod found for release $(HELM_RELEASE) in namespace $(NAMESPACE). Deploy first with 'make deploy'."; \
+		exit 1; \
+	fi; \
+	echo "Using pod: $$POD"; \
+	TOKEN=$$($(KUBECTL) exec $$POD -- sh -c '\
+		CKAN_USER_OVERRIDE="$(CKAN_USER)"; \
+		export CKAN_INI="$(CKAN_INI_PATH)"; \
+		CKAN_USER=$${CKAN_USER_OVERRIDE:-$$CKAN_SYSADMIN_NAME}; \
+		ckan user token add "$$CKAN_USER" api_token_for_$$CKAN_USER | \
+			tr -cd '\''\11\12\15\40-\176'\'' | \
+			grep -Eo '\''eyJ[0-9a-zA-Z._-]{30,}'\'' | \
+			head -n 1 \
+	'); \
+	if [ -z "$$TOKEN" ]; then \
+		echo "Failed to create token via CKAN CLI; check CKAN logs and credentials."; \
+		exit 1; \
+	fi; \
+	$(KUBECTL) create secret generic ckansysadminapitoken \
+		--from-literal=sysadminApiToken=$$TOKEN \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f -; \
+	echo "Updated secret ckansysadminapitoken in namespace $(NAMESPACE)."; \
+	echo "Sysadmin API token: $$TOKEN"; \

@@ -44,11 +44,26 @@ This repo packages the upstream [Keitaro CKAN Helm chart](https://github.com/kei
 
 ## **Enable NDP Endpoint dataset registry**
 
-To enable the NDP Endpoint dataset registry in your newly deployed CKAN, follow the steps in the Sysadmin API token section below to create a sysadmin API token.
+To enable the NDP Endpoint dataset registry in your newly deployed CKAN, follow the steps in the [Sysadmin API token section](#sysadmin-api-token) below to create a sysadmin API token.
 
 ## **Sysadmin API token**
-Generate a fresh API token for the sysadmin user from the CKAN UI, then update your overrides and secret so the deployment picks it up:
+Generate a fresh API token for the sysadmin user so downstream services (NDP Endpoint API) can use it to authenticate.
 
+### - **Fast path (no UI):**
+  1. Once CKAN is running, run:
+      > What's this: This creates a new token via the CKAN CLI inside the ckan pod, writes it to the `ckansysadminapitoken` secret in your configured namespace, and prints the token so you can save it.
+      ```bash
+      make sysadmin-token
+      ```
+
+  2. **[!IMPORTANT] ⚠️ Save this token; it is required for the NDP Endpoint API deployment.**
+
+  3. Optional: if you want to generate the token for another admin user, run:
+`make sysadmin-token CKAN_USER=<other_admin_username>`
+
+--- 
+
+### - **UI path:** Generate the token from the CKAN UI and apply it manually:
 1. **Log in as the sysadmin**
   - Visit `http://<ingress-host>/ckan/user/login`.
   - Use the **`sysadminName`** and **`sysadminPassword`** you set in `site-values.yaml`.
